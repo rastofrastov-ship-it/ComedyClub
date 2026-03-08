@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COMEDY-CLUB | Официальный сайт</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        /* Темы */
+        .theme-dark {
+            background-color: #121212 !important;
+            color: #e0e0e0 !important;
+        }
+        .theme-light {
+            background-color: #d1d1d1 !important;
+            color: #121212 !important;
+        }
+        
+        /* Модальное окно */
+        #rulesModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background-color: rgba(0,0,0,0.9);
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-light #rulesModal {
+            background-color: rgba(255,255,255,0.9);
+        }
+
+        /* Стили самого окна правил */
+        .modal-box {
+            background-color: #121212;
+            color: #e0e0e0;
+            border-color: #e0e0e0;
+        }
+        .theme-light .modal-box {
+            background-color: #d1d1d1;
+            color: #121212;
+            border-color: #121212;
+        }
+
+        /* Уведомление */
+        .copy-toast {
+            visibility: hidden;
+            min-width: 200px;
+            background-color: #ffffff;
+            color: #000000;
+            text-align: center;
+            padding: 12px;
+            position: fixed;
+            z-index: 150;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-weight: bold;
+            border: 2px solid #000;
+        }
+        .theme-light .copy-toast {
+            background-color: #000000;
+            color: #ffffff;
+            border: 2px solid #fff;
+        }
+        .copy-toast.show {
+            visibility: visible;
+            animation: fadein 0.5s, fadeout 0.5s 2.5s;
+        }
+        @keyframes fadein { from { bottom: 0; opacity: 0; } to { bottom: 30px; opacity: 1; } }
+        @keyframes fadeout { from { bottom: 30px; opacity: 1; } to { bottom: 0; opacity: 0; } }
+    </style>
+</head>
+<body class="antialiased theme-dark" id="body-root">
+
+    <!-- Навигация -->
+    <nav class="flex items-center justify-between px-6 py-4 fixed top-0 w-full z-40 border-b border-current/10 backdrop-blur-md">
+        <div class="text-2xl font-black tracking-tighter uppercase">COMEDY-CLUB</div>
+        <div class="flex items-center space-x-6">
+            <button onclick="openRules()" class="font-bold uppercase text-sm hover:opacity-60 transition">Правила</button>
+            <button onclick="toggleTheme()" class="p-2 rounded-full border border-current hover:bg-current hover:text-black transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <main class="relative min-h-screen flex flex-col items-center justify-center text-center px-4">
+        <div class="flex flex-col items-center w-full max-w-4xl mt-20">
+            <h1 class="text-6xl md:text-9xl font-black mb-12 tracking-tighter uppercase leading-none">
+                COMEDY CLUB
+            </h1>
+            
+            <!-- Блок с IP -->
+            <div class="cursor-pointer border-4 border-current mb-6 w-fit hover:opacity-80 transition-opacity" onclick="copyIP()">
+                <div class="px-8 md:px-12 py-4 text-center">
+                    <span class="opacity-50 text-[10px] uppercase block font-black mb-1 tracking-widest">КЛИКНИ, ЧТОБЫ СКОПИРОВАТЬ IP</span>
+                    <span id="server-ip" class="text-xl md:text-4xl font-black uppercase tracking-tighter">345343s.aternos.me</span>
+                </div>
+            </div>
+
+            <!-- Кнопка Скачать -->
+            <a href="https://files.catbox.moe/x5mj95.zip" class="block border-4 border-current w-fit hover:opacity-80 transition-opacity">
+                <div class="px-8 md:px-12 py-4 text-center">
+                    <span class="opacity-50 text-[10px] uppercase block font-black mb-1 tracking-widest">КЛИКНИ, ЧТОБЫ СКАЧАТЬ</span>
+                    <span class="text-xl md:text-4xl font-black uppercase tracking-tighter">СКАЧАТЬ СБОРКУ</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <!-- Модальное окно правил -->
+    <div id="rulesModal" class="p-4" onclick="closeRulesOnOverlay(event)">
+        <div class="modal-box max-w-2xl w-full max-h-[85vh] overflow-y-auto p-6 md:p-10 shadow-2xl relative border-4 text-left">
+            <button onclick="closeRules()" class="absolute top-4 right-4 p-2 hover:scale-110 transition z-50">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            
+            <h2 class="text-3xl md:text-4xl font-black mb-8 uppercase tracking-tighter border-b-4 border-current pb-2">Правила COMEDY-CLUB</h2>
+            
+            <div class="space-y-8 font-bold">
+                <section>
+                    <h3 class="text-xl md:text-2xl font-black uppercase mb-3">Общие правила</h3>
+                    <ul class="list-none space-y-2 opacity-80">
+                        <li>— Уважайте всех игроков.</li>
+                        <li>— Запрещены оскорбления, токсичность и провокации.</li>
+                        <li>— Запрещён спам в чате.</li>
+                        <li>— Никнеймы должны быть адекватными.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="text-xl md:text-2xl font-black uppercase mb-3">Игровой процесс</h3>
+                    <ul class="list-none space-y-2 opacity-80">
+                        <li>— Гриферство разрешено только в отношении баз любой фракции.</li>
+                        <li>— Воровство из чужих сундуков без разрешения запрещено.</li>
+                        <li>— Использование читов, дюпов и багов запрещено.</li>
+                        <li>— X-Ray и любые запрещённые моды запрещены.</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="text-xl md:text-2xl font-black uppercase mb-3">Постройки</h3>
+                    <ul class="list-none space-y-2 opacity-80">
+                        <li>1. Не стройте слишком близко к чужим базам без разрешения (20-30 блоков).</li>
+                        <li>2. Запрещены оскорбительные постройки.</li>
+                        <li>3. Старайтесь не портить ландшафт (засыпайте ямы, убирайте за собой).</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3 class="text-xl md:text-2xl font-black uppercase mb-3 text-red-600">Наказания</h3>
+                    <ul class="list-none space-y-2">
+                        <li>— 1. Предупреждение.</li>
+                        <li>— 2. Временный мут/бан.</li>
+                        <li>— 3. Перманентный бан при серьёзных нарушениях.</li>
+                    </ul>
+                </section>
+            </div>
+            
+            <button onclick="closeRules()" class="mt-10 w-full border-4 border-current py-4 font-black text-xl md:text-2xl hover:opacity-50 transition uppercase">Я все понял</button>
+        </div>
+    </div>
+
+    <!-- Подвал -->
+    <footer class="py-10 border-t border-current/10 text-center px-6">
+        <p class="opacity-30 text-[10px] font-black uppercase tracking-[0.2em]">© 2026 COMEDY-CLUB. NOT AN OFFICIAL MINECRAFT PRODUCT.</p>
+    </footer>
+
+    <!-- Уведомление -->
+    <div id="toast" class="copy-toast uppercase">IP скопирован</div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.getElementById('body-root');
+            if (body.classList.contains('theme-dark')) {
+                body.classList.remove('theme-dark');
+                body.classList.add('theme-light');
+            } else {
+                body.classList.remove('theme-light');
+                body.classList.add('theme-dark');
+            }
+        }
+
+        function copyIP() {
+            // Берем текст IP и принудительно переводим его в нижний регистр для буфера обмена
+            const ipText = document.getElementById('server-ip').innerText.toLowerCase();
+            const el = document.createElement('textarea');
+            el.value = ipText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 2500);
+        }
+
+        function openRules() {
+            document.getElementById('rulesModal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRules() {
+            document.getElementById('rulesModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeRulesOnOverlay(e) {
+            if (e.target.id === 'rulesModal') closeRules();
+        }
+    </script>
+</body>
+</html>
